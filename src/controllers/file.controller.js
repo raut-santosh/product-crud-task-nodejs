@@ -2,21 +2,19 @@ const File = require('../models/file.model');
 const multer = require("multer");
 const path = require("path");
 
-// Configure multer storage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "public/uploads");
     },
     filename: (req, file, cb) => {
-        const fieldName = file.fieldname || "file"; // Use "file" as the default field name
-        cb(null, fieldName + "-" + Date.now() + path.extname(file.originalname));
+        const fieldName = file.fieldname || "file";
+        const randomString = Math.random().toString(36).substring(7);
+        cb(null, `${fieldName}-${Date.now()}-${randomString}${path.extname(file.originalname)}`);
     },
-       
 });
 
-// Create multer instance for single and multiple file uploads
 exports.uploadSingle = multer({ storage }).single("file");
-exports.uploadMultiple = multer({ storage }).array("files", 5); // Set the maximum number of files as needed
+exports.uploadMultiple = multer({ storage }).array("files", 5); 
 
 exports.fileUpload = async (req, res) => {
     console.log('req.files')
